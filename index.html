@@ -1,0 +1,1610 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+<title>Fiche journalière – Simulation DEP 5291</title>
+<style>
+/* ═══════════════════════════════════════════
+   BASE
+═══════════════════════════════════════════ */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+  background: #ddd8cf;
+  color: #111;
+  min-height: 100vh;
+  padding: 16px 12px;
+}
+
+.page-wrap {
+  max-width: 1440px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ═══════════════════════════════════════════
+   PEDAGOGICAL BANNER
+═══════════════════════════════════════════ */
+.peda-banner {
+  background: #1a3a5c;
+  color: #fff;
+  padding: 11px 22px;
+  border-radius: 6px 6px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 3px solid #0d2540;
+}
+.peda-banner h1 {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.peda-banner .sub {
+  font-size: 11px;
+  opacity: 0.70;
+  margin-top: 2px;
+}
+.reg-pill {
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.28);
+  border-radius: 20px;
+  padding: 5px 16px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+}
+
+/* ═══════════════════════════════════════════
+   DOCUMENT PAPER
+═══════════════════════════════════════════ */
+.doc {
+  background: #fff;
+  border: 1px solid #b0aa9e;
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.13);
+  overflow: hidden;
+}
+
+/* ── Official form title ── */
+.doc-title {
+  background: #1a3a5c;
+  color: #fff;
+  text-align: center;
+  padding: 10px 14px 8px;
+  border-bottom: 2px solid #0d2540;
+}
+.doc-title .main { font-size: 13px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; }
+.doc-title .rule { font-size: 10px; opacity: 0.72; margin-top: 3px; letter-spacing: 0.06em; }
+
+/* ── Header fields ── */
+.header-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-bottom: 2px solid #b0aa9e;
+}
+.hcol {
+  padding: 11px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.hcol:first-child { border-right: 1px solid #b0aa9e; }
+
+.hrow {
+  display: flex;
+  align-items: baseline;
+  gap: 0;
+  border-bottom: 1px solid #e0ddd4;
+  padding-bottom: 5px;
+}
+.hrow:last-child { border-bottom: none; padding-bottom: 0; }
+.hlbl {
+  font-size: 10px;
+  font-weight: 700;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  min-width: 148px;
+  padding-right: 8px;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+.hval {
+  font-size: 12px;
+  font-weight: 600;
+  color: #111;
+}
+
+/* ═══════════════════════════════════════════
+   CONTROLS TOOLBAR
+═══════════════════════════════════════════ */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px 0;
+  flex-wrap: wrap;
+}
+.btn {
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 7px 18px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.12s, transform 0.08s;
+  white-space: nowrap;
+}
+.btn:active { transform: scale(0.97); }
+.btn-gen  { background: #1a3a5c; color: #fff; }
+.btn-gen:hover  { background: #0d2540; }
+.btn-res  { background: #1e5c28; color: #fff; }
+.btn-res:hover  { background: #124018; }
+
+.verdict-select {
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 7px 14px;
+  border: 2px solid #b0aa9e;
+  border-radius: 4px;
+  background: #fff;
+  color: #111;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+}
+.hint-line {
+  margin-left: auto;
+  font-size: 10px;
+  color: #999;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+/* ═══════════════════════════════════════════
+   GRID SECTION
+═══════════════════════════════════════════ */
+.grid-section {
+  padding: 10px 18px 0;
+}
+
+/* outer flex: grid + total column */
+.grid-outer {
+  display: flex;
+  align-items: stretch;
+}
+
+/* ── grid wrapper ── */
+.grid-wrap {
+  flex: 1;
+  border: 1.5px solid #7a7668;
+  border-radius: 4px 0 0 4px;
+  overflow: hidden;
+}
+
+/* ── ruler row ── */
+.ruler-row {
+  display: flex;
+  height: 38px;
+  background: #fff;
+  border-bottom: 1.5px solid #7a7668;
+}
+.ruler-lbl {
+  width: 88px;
+  min-width: 88px;
+  background: #dce8f4;
+  border-right: 2px solid #7a7668;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #1a3a5c;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.ruler-area {
+  flex: 1;
+  position: relative;
+  background: #fff;
+  overflow: hidden;
+}
+
+/* tick marks – 3 heights, all same thin weight */
+.tk {
+  position: absolute;
+  bottom: 0;
+  pointer-events: none;
+}
+.tk-h  { width: 1px; height: 55%; background: #777; }   /* hour – taller but not full height, leaves room for numbers */
+.tk-hf { width: 1px; height: 35%; background: #aaa; }   /* half */
+.tk-q  { width: 1px; height: 20%; background: #ccc; }   /* quarter */
+
+.hn {  /* hour number – vertically centered in ruler, 2px right of tick */
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 11px;
+  font-weight: 700;
+  font-family: Arial, sans-serif;
+  color: #1a3a5c;
+  white-space: nowrap;
+  background: #fff;
+  padding: 0 1px;
+  line-height: 1;
+}
+
+/* ── activity row ── */
+.act-row {
+  display: flex;
+  height: 52px;
+  border-bottom: 1px solid #ccc8bc;
+  background: #fff;
+}
+.act-row:last-child { border-bottom: none; }
+
+.act-lbl {
+  width: 88px;
+  min-width: 88px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #fff;
+  border-right: 2px solid #7a7668;
+  text-align: center;
+  padding: 3px 5px;
+  line-height: 1.25;
+}
+.lbl-repos    { background: #2a5878; }
+.lbl-couchette { background: #56437a; }
+.lbl-conduite { background: #276627; }
+.lbl-travail  { background: #7a4810; }
+
+/* ── cells area – pure white, no column lines, only ticks and SVG lines ── */
+.cells-area {
+  flex: 1;
+  position: relative;
+  background: #fff;
+  overflow: hidden;
+}
+/* Act rows always white */
+.act-row { background: #fff; }
+.act-row .cells-area { background-color: #fff; }
+
+/* inner tick container */
+.cell-ticks {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.ct {
+  position: absolute;
+  top: 0;
+  pointer-events: none;
+}
+/* Hour tick — same width as others, just full height */
+.ct-h  { width: 1px; height: 100%; background: #999; }
+/* Half-hour tick */
+.ct-hf { width: 1px; height: 42%; background: #999; }
+/* Quarter-hour tick */
+.ct-q  { width: 1px; height: 26%; background: #999; }
+
+/* SVG line overlay */
+.cells-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+
+/* ── bottom border row (remarques) – full width, doubled height ── */
+.remarques-row {
+  border-top: 1.5px solid #7a7668;
+  background: #dce8f4;
+  padding: 10px 14px;
+  min-height: 100px;
+}
+.rem-lbl { display: none; }
+.rem-title {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #1a3a5c;
+  display: block;
+  margin-bottom: 6px;
+}
+.rem-writing-zone {
+  background: #fff;
+  border: 1px solid #a8c4e0;
+  border-radius: 3px;
+  min-height: 62px;
+  width: 100%;
+}
+
+/* Signature – single compact line */
+.sig-row {
+  display: flex;
+  align-items: center;
+  border-top: 1px solid #a8c4e0;
+  background: #dce8f4;
+  height: 40px;
+  padding: 0 14px;
+  gap: 14px;
+}
+.sig-lbl-inline {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #1a3a5c;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.sig-cursive {
+  font-family: 'Brush Script MT', 'Segoe Script', 'Comic Sans MS', cursive;
+  font-size: 24px;
+  color: #1a3075;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+}
+.sig-underline-wrap {
+  flex: 1;
+  max-width: 200px;
+  border-bottom: 1.5px solid #555;
+}
+.sig-caption {
+  font-size: 10px;
+  color: #666;
+  font-style: italic;
+  white-space: nowrap;
+}
+
+/* ═══════════════════════════════════════════
+   TOTAL COLUMN
+═══════════════════════════════════════════ */
+.total-col {
+  width: 116px;
+  min-width: 116px;
+  border: 1.5px solid #7a7668;
+  border-left: none;
+  border-radius: 0 4px 4px 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: #dce8f4;
+}
+.tot-hdr {
+  height: 38px;
+  flex-shrink: 0;
+  background: #1a3a5c;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-bottom: 1.5px solid #7a7668;
+  line-height: 1.15;
+}
+.tot-hdr .tot-sub {
+  font-size: 8px;
+  font-weight: 400;
+  opacity: 0.75;
+  letter-spacing: 0.04em;
+}
+.tot-row {
+  height: 52px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid #a8c4e0;
+  padding: 5px 6px;
+  background: #dce8f4;
+}
+.tot-row:nth-child(even) { background: #ccdff0; }
+.tot-row label {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #1a3a5c;
+  margin-bottom: 4px;
+  text-align: center;
+}
+.tot-row input[type="number"] {
+  font-family: Arial, monospace;
+  font-size: 13px;
+  font-weight: 700;
+  width: 94px;
+  text-align: center;
+  border: 1.5px solid #7aaed0;
+  border-radius: 3px;
+  background: #fff;
+  color: #1a3a5c;
+  padding: 4px;
+  outline: none;
+}
+.tot-row input[type="number"]:focus { border-color: #1a3a5c; box-shadow: 0 0 0 2px rgba(26,58,92,0.15); }
+.tot-disabled {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid #a8c4e0;
+  padding: 5px 6px;
+  background: #e8f0f8;
+}
+.tot-disabled label {
+  font-size: 9px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.06em; color: #7aaed0; margin-bottom: 4px; text-align: center;
+}
+.tot-disabled .dash {
+  font-size: 20px; color: #aaccee; line-height: 1;
+}
+.tot-spacer {
+  flex: 1;
+  background: #dce8f4;
+  border-top: 1.5px solid #7a7668;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+input[type="number"] { -moz-appearance: textfield; }
+
+/* ═══════════════════════════════════════════
+   RESULT BOX
+═══════════════════════════════════════════ */
+.result-section { padding: 14px 18px 22px; }
+
+/* ── STAT CARDS ── */
+.stat-cards {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 14px 0;
+}
+.stat-card {
+  border-radius: 5px; padding: 12px 14px; border: 1.5px solid;
+  display: flex; flex-direction: column; gap: 3px; position: relative;
+}
+.stat-card.ok   { background: #eaf4ea; border-color: #2a7a2a; }
+.stat-card.err  { background: #f8eaea; border-color: #8a1a1a; }
+.stat-card.info { background: #dce8f4; border-color: #7aaed0; }
+.sc-label { font-size: 10px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; }
+.stat-card.ok   .sc-label { color: #1a5a1a; }
+.stat-card.err  .sc-label { color: #7a1a1a; }
+.stat-card.info .sc-label { color: #1a3a5c; }
+.sc-value { font-size: 22px; font-weight: 700; line-height: 1.1; }
+.stat-card.ok   .sc-value { color: #1a5a1a; }
+.stat-card.err  .sc-value { color: #7a1a1a; }
+.stat-card.info .sc-value { color: #1a3a5c; }
+.sc-limit { font-size: 11px; margin-top: 2px; }
+.stat-card.ok   .sc-limit { color: #2a7a2a; }
+.stat-card.err  .sc-limit { color: #8a2a2a; }
+.stat-card.info .sc-limit { color: #3a6a9c; }
+.sc-icon { position: absolute; top: 10px; right: 12px; font-size: 15px; }
+
+.result-box {
+  display: none;
+  border-radius: 5px;
+  padding: 16px 20px;
+  border: 2px solid;
+  line-height: 1.8;
+}
+.result-box.correct { background: #eaf4ea; border-color: #1e5c28; }
+.result-box.wrong   { background: #f8eaea; border-color: #7a1a1a; }
+
+.verdict {
+  font-size: 14px; font-weight: 700; margin-bottom: 10px;
+  display: flex; align-items: center; gap: 10px;
+}
+.v-icon {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; font-weight: 700; flex-shrink: 0;
+}
+.correct .v-icon { background: #1e5c28; color: #fff; }
+.wrong   .v-icon { background: #7a1a1a; color: #fff; }
+
+.retro { font-size: 12px; margin-bottom: 12px; }
+.retro ul { margin: 5px 0 0 18px; }
+.retro li { margin-bottom: 3px; }
+
+.chk-section { margin-bottom: 12px; }
+.chk-title {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  color: #666; margin-bottom: 5px;
+}
+.chk-subtitle { font-size: 10px; color: #999; font-style: italic; margin-bottom: 8px; }
+.chk-row {
+  display: flex; align-items: center; gap: 8px; font-size: 12px;
+  padding: 4px 0; border-bottom: 1px solid rgba(0,0,0,0.07);
+}
+.chk-lbl  { width: 210px; font-weight: 600; }
+.chk-user { width: 72px; font-family: Arial, monospace; }
+.chk-real { width: 72px; font-family: Arial, monospace; }
+.chk-sep  { font-size: 10px; color: #aaa; }
+.ok  { color: #1e5c28; }
+.err { color: #7a1a1a; }
+
+.reg-note {
+  font-size: 11px; color: #555;
+  background: #f4f2ec; padding: 9px 13px;
+  border-radius: 4px; border-left: 3px solid #b0aa9e;
+  line-height: 1.7;
+}
+
+/* ── PARTIAL FICHE SECTION ── */
+.partial-header {
+  background: #1a3a5c; color: #fff;
+  padding: 9px 16px; border-radius: 4px 4px 0 0;
+  font-size: 12px; font-weight: 700;
+}
+.partial-body {
+  background: #dce8f4; border: 1.5px solid #7aaed0;
+  border-top: none; border-radius: 0 0 4px 4px; padding: 14px 18px;
+}
+.partial-info {
+  font-size: 12px; color: #1a3a5c; margin-bottom: 14px; line-height: 1.7;
+  background: #fff; border: 1px solid #a8c4e0; border-radius: 3px; padding: 10px 13px;
+}
+.partial-fields { display: flex; flex-direction: column; gap: 8px; }
+.pf-row {
+  display: flex; align-items: center; gap: 10px;
+  background: #fff; border: 1px solid #a8c4e0; border-radius: 3px; padding: 7px 12px;
+}
+.pf-row label { flex: 1; font-size: 12px; font-weight: 600; color: #1a3a5c; }
+.pf-row input[type="number"] {
+  font-family: Arial, monospace; font-size: 13px; font-weight: 700;
+  width: 80px; text-align: center; border: 1.5px solid #7aaed0;
+  border-radius: 3px; background: #fffef8; color: #1a3a5c; padding: 4px; outline: none;
+}
+.pf-row input[type="number"]:focus { border-color: #1a3a5c; }
+.pf-unit { font-size: 11px; color: #7a7668; width: 12px; }
+/* ═══════════════════════════════════════════════════
+   RESPONSIVE — TABLET & MOBILE
+═══════════════════════════════════════════════════ */
+
+/* Tablet (≤ 900px): stack info fields, compress toolbar */
+@media (max-width: 900px) {
+  .header-fields { grid-template-columns: 1fr; }
+  .hcol:first-child { border-right: none; border-bottom: 1px solid #b0aa9e; }
+
+  .toolbar { gap: 6px; }
+  .btn { padding: 8px 12px; font-size: 11px; }
+  .verdict-select { font-size: 11px; padding: 6px 8px; }
+  .hint-line { display: none; }
+
+  .stat-cards { grid-template-columns: 1fr; }
+
+  .total-col { width: 90px; min-width: 90px; }
+  .tot-row input[type="number"] { width: 74px; font-size: 12px; }
+
+  .act-row { height: 44px; }
+  .act-lbl { width: 70px; min-width: 70px; font-size: 9px; }
+  .ruler-lbl { width: 70px; min-width: 70px; font-size: 9px; }
+  .cell-ticks, .row-ticks { display: none; } /* hide sub-ticks on small screens */
+}
+
+/* Mobile (≤ 600px): further simplification */
+@media (max-width: 600px) {
+  body { padding: 8px 4px; }
+
+  .peda-banner { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .reg-pill { align-self: flex-start; }
+
+  .toolbar { flex-direction: column; align-items: stretch; }
+  .toolbar button, .toolbar select { width: 100%; }
+  #conformeWrap { justify-content: stretch !important; }
+  #conformeWrap select { width: 100%; }
+
+  .header-fields { grid-template-columns: 1fr; }
+  .hcol { padding: 8px 10px; }
+
+  .act-row { height: 40px; }
+  .act-lbl { width: 60px; min-width: 60px; font-size: 8px; padding: 2px 3px; }
+  .ruler-lbl { width: 60px; min-width: 60px; font-size: 8px; }
+  .total-col { width: 76px; min-width: 76px; }
+  .tot-row input[type="number"] { width: 62px; font-size: 11px; }
+  .tot-row label { font-size: 7px; }
+  .hn { font-size: 8px; }
+
+  .stat-cards { grid-template-columns: 1fr; }
+  .sc-value { font-size: 18px; }
+
+  .partial-fields .pf-row { flex-wrap: wrap; }
+  .pf-row label { width: 100%; }
+
+  .doc-body { padding: 8px 10px 14px; }
+  .grid-section { padding: 6px 10px 0; }
+  .result-section { padding: 8px 10px 14px; }
+}
+
+/* Ensure grid never collapses below minimum usable width */
+.log-grid-wrap { min-width: 0; overflow-x: auto; }
+.grid-outer { min-width: 0; }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+<!-- ── PEDAGOGICAL BANNER ── -->
+<div class="peda-banner">
+  <div>
+    <h1>Simulation – Fiche journalière de conducteur</h1>
+    <div class="sub">DEP 5291 · Transport routier de marchandises · Québec</div>
+  </div>
+  <div class="reg-pill">Règlement sur les heures de conduite et de repos</div>
+</div>
+
+<div class="doc">
+
+  <!-- ── OFFICIAL TITLE ── -->
+  <div class="doc-title">
+    <div class="main">Rapport quotidien du conducteur</div>
+  </div>
+
+  <!-- ── HEADER FIELDS ── -->
+  <div class="header-fields">
+    <div class="hcol">
+      <div class="hrow">
+        <span class="hlbl">Exploitant</span>
+        <span class="hval">Centre de services scolaire de la Rivière-du-Nord</span>
+      </div>
+      <div class="hrow">
+        <span class="hlbl">Adresse</span>
+        <span class="hval">795 Rue Melançon, Saint-Jérôme, QC &nbsp;J7Z 4L1</span>
+      </div>
+      <div class="hrow">
+        <span class="hlbl">Nom du conducteur</span>
+        <span class="hval">Jean Prudent</span>
+      </div>
+      <div class="hrow">
+        <span class="hlbl">Cycle applicable</span>
+        <span class="hval">Cycle 1 – 70 h / 7 jours</span>
+      </div>
+    </div>
+    <div class="hcol">
+      <div class="hrow">
+        <span class="hlbl">Date</span>
+        <span class="hval" id="disp-date">—</span>
+      </div>
+      <div class="hrow">
+        <span class="hlbl">Immatriculation du véhicule</span>
+        <span class="hval">L123456</span>
+      </div>
+      <div class="hrow">
+        <span class="hlbl">Odomètre début</span>
+        <span class="hval" id="odo-deb">—</span>
+      </div>
+      <div class="hrow">
+        <span class="hlbl">Odomètre fin</span>
+        <span class="hval" id="odo-fin">—</span>
+      </div>
+      <div class="hrow">
+        <span class="hlbl">Kilomètres conduits aujourd'hui</span>
+        <span class="hval" id="odo-km">—</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TOOLBAR ── -->
+  <div class="toolbar">
+    <button class="btn btn-gen" onclick="generateFiche()">⟳ Générer</button>
+    <select class="verdict-select" id="ficheType" onchange="onFicheTypeChange()">
+      <option value="complete">Fiche complète</option>
+      <option value="partielle">Fiche partielle</option>
+    </select>
+    <select class="verdict-select" id="driverType">
+      <option value="local">Chauffeur local</option>
+      <option value="longue">Chauffeur longue distance</option>
+    </select>
+    <div id="conformeWrap" style="flex:1;display:flex;justify-content:center;">
+      <select class="verdict-select" id="conformeSelect">
+        <option value="">— Verdict de conformité —</option>
+        <option value="conforme">✓ &nbsp;Conforme au règlement HCR</option>
+        <option value="non-conforme">✗ &nbsp;Non-conforme au règlement HCR</option>
+      </select>
+    </div>
+    <button class="btn btn-res" onclick="showResult()">Résultats ▶</button>
+    <span class="hint-line">Chaque colonne = 1 h &nbsp;|&nbsp; Chaque division = 15 min</span>
+  </div>
+
+  <!-- ── GRID SECTION ── -->
+  <div class="grid-section">
+    <div style="height:12px;"></div>
+
+    <div class="grid-outer">
+
+      <!-- GRID -->
+      <div class="grid-wrap">
+
+        <!-- Ruler (top only) -->
+        <div class="ruler-row">
+          <div class="ruler-lbl">Heure</div>
+          <div class="ruler-area" id="ruler"></div>
+        </div>
+
+        <!-- Repos -->
+        <div class="act-row">
+          <div class="act-lbl lbl-repos">Repos</div>
+          <div class="cells-area" id="ca-repos">
+            <div class="cell-ticks" id="ct-repos"></div>
+            <svg class="cells-svg" id="svg-repos"></svg>
+          </div>
+        </div>
+
+        <!-- Couchette -->
+        <div class="act-row">
+          <div class="act-lbl lbl-couchette">Couchette</div>
+          <div class="cells-area" id="ca-couchette">
+            <div class="cell-ticks" id="ct-couchette"></div>
+            <svg class="cells-svg" id="svg-couchette"></svg>
+          </div>
+        </div>
+
+        <!-- Conduite -->
+        <div class="act-row">
+          <div class="act-lbl lbl-conduite">Conduite</div>
+          <div class="cells-area" id="ca-conduite">
+            <div class="cell-ticks" id="ct-conduite"></div>
+            <svg class="cells-svg" id="svg-conduite"></svg>
+          </div>
+        </div>
+
+        <!-- Travail -->
+        <div class="act-row">
+          <div class="act-lbl lbl-travail">Travail</div>
+          <div class="cells-area" id="ca-travail">
+            <div class="cell-ticks" id="ct-travail"></div>
+            <svg class="cells-svg" id="svg-travail"></svg>
+          </div>
+        </div>
+
+        <!-- Remarques -->
+        <div class="remarques-row">
+          <span class="rem-title">Remarques</span>
+          <div class="rem-writing-zone"></div>
+        </div>
+
+        <!-- Signature – single line -->
+        <div class="sig-row">
+          <span class="sig-lbl-inline">Signature du chauffeur :</span>
+          <span class="sig-cursive">Jean Prudent</span>
+        </div>
+
+      </div><!-- /grid-wrap -->
+
+      <!-- TOTAL COLUMN -->
+      <div class="total-col">
+        <div class="tot-hdr">
+          Total (h)
+          <span class="tot-sub">/ 24 h</span>
+        </div>
+
+        <div class="tot-row">
+          <label>Repos</label>
+          <input type="number" id="in-repos" min="0" max="24" step="0.25" placeholder="0.00">
+        </div>
+
+        <div class="tot-row">
+          <label>Couchette</label>
+          <input type="number" id="in-couchette" min="0" max="24" step="0.25" placeholder="0.00">
+        </div>
+
+        <div class="tot-row">
+          <label>Conduite</label>
+          <input type="number" id="in-conduite" min="0" max="24" step="0.25" placeholder="0.00">
+        </div>
+
+        <div class="tot-row">
+          <label>Travail</label>
+          <input type="number" id="in-travail" min="0" max="24" step="0.25" placeholder="0.00">
+        </div>
+
+        <div class="tot-spacer"></div>
+      </div>
+
+    </div><!-- /grid-outer -->
+  </div><!-- /grid-section -->
+
+  <!-- ── RESULT ── -->
+  <div class="result-section">
+
+    <!-- CONSIGNE (shown for both modes) -->
+    <div id="consigneSection" style="display:none; margin-bottom:16px;">
+      <div class="partial-header" id="consigneHeader"></div>
+      <div class="partial-body">
+        <div class="partial-info" id="consigneText"></div>
+        <!-- Partial-only answer fields -->
+        <div class="partial-fields" id="partialFields" style="display:none;">
+          <div class="pf-row">
+            <label>Temps de service restant au poste de 16 h</label>
+            <input type="number" id="p-service-rest" min="0" max="16" step="0.25" placeholder="0.00">
+            <span class="pf-unit">h</span>
+          </div>
+          <div class="pf-row">
+            <label>Heures de conduite restantes (max 13 h)</label>
+            <input type="number" id="p-conduite-rest" min="0" max="13" step="0.25" placeholder="0.00">
+            <span class="pf-unit">h</span>
+          </div>
+          <div class="pf-row">
+            <label>Heures de travail restantes (max 14 h)</label>
+            <input type="number" id="p-travail-rest" min="0" max="14" step="0.25" placeholder="0.00">
+            <span class="pf-unit">h</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="resultBox" class="result-box">
+      <div class="verdict">
+        <span class="v-icon" id="vIcon"></span>
+        <span id="vText"></span>
+      </div>
+      <div class="retro" id="retro"></div>
+      <div class="chk-section">
+        <div class="chk-title" id="chkTitle">Vérification de vos totaux</div>
+        <div class="chk-subtitle">Votre réponse → Réponse correcte</div>
+        <div id="chkRows"></div>
+      </div>
+      <div class="reg-note" id="regNote"></div>
+    </div>
+  </div>
+
+</div><!-- /doc -->
+</div><!-- /page-wrap -->
+
+<script>
+/* ═══════════════════════════════════════════════════
+   CONSTANTS & STATE
+═══════════════════════════════════════════════════ */
+const Q = 96; // 96 × 15 min = 24 h
+const ROWS = ['repos','conduite','travail']; // generated rows
+const ALL_ROWS = ['repos','couchette','conduite','travail']; // display order
+
+const state = {};
+ALL_ROWS.forEach(r => { state[r] = new Array(Q).fill(false); });
+
+/* ── Toggle conformity dropdown based on fiche type ── */
+function onFicheTypeChange() {
+  const isPartial = document.getElementById('ficheType').value === 'partielle';
+  const wrap = document.getElementById('conformeWrap');
+  wrap.style.display = isPartial ? 'none' : 'flex';
+  wrap.style.flex = isPartial ? '0' : '1';
+  if (isPartial) document.getElementById('conformeSelect').value = '';
+}
+
+/* ═══════════════════════════════════════════════════
+   BUILD RULER (top only, hour numbers right of tick)
+═══════════════════════════════════════════════════ */
+function buildRuler() {
+  const el = document.getElementById('ruler');
+  el.innerHTML = '';
+  for (let q = 0; q <= Q; q++) {
+    const pct = (q / Q * 100);
+    const pctStr = pct.toFixed(6) + '%';
+
+    if (q % 4 === 0) {
+      // Hour tick
+      const t = mk('div','tk tk-h'); t.style.left = pctStr; el.appendChild(t);
+      // Hour number: placed at TOP of ruler, 2px right of tick — never overlaps ticks
+      const h = q / 4;
+      if (h < 24) {
+        const n = mk('div','hn');
+        n.style.left = 'calc(' + pctStr + ' + 2px)';
+        n.textContent = String(h).padStart(2,'0');
+        el.appendChild(n);
+      }
+    } else if (q % 2 === 0) {
+      const t = mk('div','tk tk-hf'); t.style.left = pctStr; el.appendChild(t);
+    } else {
+      const t = mk('div','tk tk-q'); t.style.left = pctStr; el.appendChild(t);
+    }
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   BUILD CELL TICKS (inside each activity row)
+═══════════════════════════════════════════════════ */
+function buildCellTicks(rowType) {
+  const c = document.getElementById('ct-' + rowType);
+  c.innerHTML = '';
+  for (let q = 1; q < Q; q++) {
+    const pctStr = (q / Q * 100).toFixed(6) + '%';
+    let cls;
+    if (q % 4 === 0)      cls = 'ct ct-h';   // hour
+    else if (q % 2 === 0) cls = 'ct ct-hf';  // half-hour
+    else                   cls = 'ct ct-q';   // quarter
+    const t = mk('div', cls);
+    t.style.left = pctStr;
+    c.appendChild(t);
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   RENDER: draw black lines on SVG overlays
+   Rules:
+   - One horizontal line per continuous active segment,
+     centered vertically in the row
+   - Short vertical bars ONLY at the absolute start
+     and end of the whole activity (not mid-transitions)
+   - At each activity boundary, the vertical transition
+     line connects the two row mid-points across the
+     shared border (drawn in the UPPER row's SVG,
+     extended to bottom; drawn in LOWER row's SVG,
+     extended to top)
+═══════════════════════════════════════════════════ */
+function renderAll() {
+  ALL_ROWS.forEach(r => {
+    const svg = document.getElementById('svg-' + r);
+    const ca  = document.getElementById('ca-' + r);
+    const W = ca.clientWidth  || 900;
+    const H = ca.clientHeight || 52;
+    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    svg.setAttribute('preserveAspectRatio', 'none');
+    svg.innerHTML = '';
+  });
+
+  // For each column boundary (1..Q-1), check if there is a row transition.
+  // A transition means: one row is active before the boundary, a DIFFERENT row is active after.
+  // The vertical connector goes from midY of the "from" row to midY of the "to" row,
+  // crossing all intermediate rows at full height.
+  for (let col = 1; col < Q; col++) {
+    // Which row was active just before this boundary?
+    let fromRow = -1, toRow = -1;
+    for (let ri = 0; ri < ALL_ROWS.length; ri++) {
+      if (state[ALL_ROWS[ri]][col - 1]) fromRow = ri;
+      if (col < Q && state[ALL_ROWS[ri]][col]) toRow = ri;
+    }
+    // Only draw connector if active row actually changes
+    if (fromRow === -1 || toRow === -1 || fromRow === toRow) continue;
+
+    const xPct = col / Q;
+    const top = Math.min(fromRow, toRow);
+    const bot = Math.max(fromRow, toRow);
+
+    for (let ri = top; ri <= bot; ri++) {
+      const r   = ALL_ROWS[ri];
+      const svg = document.getElementById('svg-' + r);
+      const ca  = document.getElementById('ca-' + r);
+      const W   = ca.clientWidth  || 900;
+      const H   = ca.clientHeight || 52;
+      const midY = H / 2;
+      const x   = xPct * W;
+
+      let y1, y2;
+      if (ri === fromRow) {
+        // Row where the line was: connect from its midpoint toward the other row
+        y1 = midY;
+        y2 = (toRow > fromRow) ? H : 0;
+      } else if (ri === toRow) {
+        // Row where the line goes: connect from the edge to its midpoint
+        y1 = (fromRow < toRow) ? 0 : H;
+        y2 = midY;
+      } else {
+        // Intermediate row (e.g. couchette passing through): full height
+        y1 = 0;
+        y2 = H;
+      }
+
+      const l = svgLine(svg);
+      l.setAttribute('x1', x); l.setAttribute('y1', y1);
+      l.setAttribute('x2', x); l.setAttribute('y2', y2);
+      l.setAttribute('stroke', '#111');
+      l.setAttribute('stroke-width', '2.5');
+      l.setAttribute('stroke-linecap', 'butt');
+    }
+  }
+
+  // Draw horizontal lines; end-caps only at true start/end of the whole day trace
+  ALL_ROWS.forEach(r => drawRowLines(r));
+}
+
+function drawRowLines(rowType) {
+  const svg = document.getElementById('svg-' + rowType);
+  const ca  = document.getElementById('ca-' + rowType);
+  const W   = ca.clientWidth  || 900;
+  const H   = ca.clientHeight || 52;
+  const midY = H / 2;
+  const ri  = ALL_ROWS.indexOf(rowType);
+
+  getSegments(rowType).forEach(seg => {
+    const x1 = seg.start / Q * W;
+    const x2 = (seg.start + seg.len) / Q * W;
+
+    // Horizontal line through the middle of the row
+    const line = svgLine(svg);
+    line.setAttribute('x1', x1); line.setAttribute('y1', midY);
+    line.setAttribute('x2', x2); line.setAttribute('y2', midY);
+    line.setAttribute('stroke', '#111');
+    line.setAttribute('stroke-width', '2.5');
+    line.setAttribute('stroke-linecap', 'butt');
+
+    // End-cap at segment START — only if no vertical connector here
+    if (!hasTransitionAt(seg.start)) {
+      drawCap(svg, x1, midY, 8);
+    }
+    // End-cap at segment END — only if no vertical connector here
+    if (!hasTransitionAt(seg.start + seg.len)) {
+      drawCap(svg, x2, midY, 8);
+    }
+  });
+}
+
+// Returns true if at boundary `col` the active row changes (i.e. a vertical connector is drawn)
+function hasTransitionAt(col) {
+  if (col === 0 || col >= Q) return false;
+  let fromRow = -1, toRow = -1;
+  for (let ri = 0; ri < ALL_ROWS.length; ri++) {
+    if (state[ALL_ROWS[ri]][col - 1]) fromRow = ri;
+    if (state[ALL_ROWS[ri]][col])     toRow   = ri;
+  }
+  return fromRow !== -1 && toRow !== -1 && fromRow !== toRow;
+}
+
+function drawCap(svg, x, midY, h) {
+  const l = svgLine(svg);
+  l.setAttribute('x1', x); l.setAttribute('y1', midY - h);
+  l.setAttribute('x2', x); l.setAttribute('y2', midY + h);
+  l.setAttribute('stroke', '#111');
+  l.setAttribute('stroke-width', '2.2');
+  l.setAttribute('stroke-linecap', 'round');
+}
+
+function svgLine(svg) {
+  const l = document.createElementNS('http://www.w3.org/2000/svg','line');
+  svg.appendChild(l);
+  return l;
+}
+
+function getSegments(rowType) {
+  const arr = state[rowType], segs = [];
+  let i = 0;
+  while (i < Q) {
+    if (arr[i]) {
+      let j = i;
+      while (j < Q && arr[j]) j++;
+      segs.push({ start: i, len: j-i });
+      i = j;
+    } else i++;
+  }
+  return segs;
+}
+
+function mk(tag, cls) {
+  const el = document.createElement(tag);
+  if (cls) el.className = cls;
+  return el;
+}
+
+/* ═══════════════════════════════════════════════════
+   TOTALS
+═══════════════════════════════════════════════════ */
+function calcTotals() {
+  const repos     = state.repos.filter(Boolean).length     * 0.25;
+  const couchette = state.couchette.filter(Boolean).length * 0.25;
+  const conduite  = state.conduite.filter(Boolean).length  * 0.25;
+  const travail   = state.travail.filter(Boolean).length   * 0.25;
+  return {
+    repos, couchette, conduite, travail,
+    service: conduite + travail,
+    resTot: repos + couchette,
+    total: repos + couchette + conduite + travail
+  };
+}
+
+function fmtH(h) {
+  if (isNaN(h) || h == null) return '—';
+  return Math.floor(h) + ' h ' + String(Math.round((h - Math.floor(h)) * 60)).padStart(2,'0');
+}
+
+/* ═══════════════════════════════════════════════════
+   SCHEDULE BUILDERS
+═══════════════════════════════════════════════════ */
+function rq(a, b) {
+  const qa = Math.round(a*4), qb = Math.round(b*4);
+  return qa + Math.floor(Math.random() * (qb - qa + 1));
+}
+
+// LOCAL driver: repos + conduite + travail, optionally non-compliant
+function buildScheduleLocal(partial) {
+  const segs = []; let pos = 0;
+  const maxQ = partial ? Math.round(Q * (0.65 + Math.random() * 0.15)) : Q;
+
+  function add(type, len) {
+    len = Math.min(len, maxQ - pos);
+    if (len <= 0) return;
+    segs.push({ type, start: pos, len }); pos += len;
+  }
+
+  // Repos initial : min 3h, max 8h → poste démarre au plus tard à 08h00
+  add('repos', rq(3, 8));
+  add('conduite', rq(1.5, 4));
+  if (Math.random() > 0.4) add('travail', rq(0.5, 1.5));
+  if (Math.random() > 0.4) add('repos', rq(0.5, 1.5));
+  add('conduite', rq(2, 5));
+  if (Math.random() > 0.3) add('travail', rq(0.5, 2));
+  if (Math.random() > 0.5 && pos < (partial ? maxQ - 4 : 78)) {
+    add('conduite', rq(1, 4));
+    if (Math.random() > 0.5) add('travail', rq(0.25, 1));
+  }
+
+  // For fiche complète: always fill remaining quarters with repos to reach exactly 24 h
+  if (!partial && pos < Q) {
+    add('repos', Q - pos);
+  }
+
+  return segs;
+}
+
+// LONG-DISTANCE driver
+// 2 h modulables = minimum 2 h total, in breaks of 30/60/90 min each (multiples of 2q)
+// Breaks are distributed between driving/work blocks between the two couchette periods.
+// The fiche NEVER ends with repos. Fiche complète ALWAYS fills exactly 24 h.
+function buildScheduleLongue(partial) {
+  const segs = []; let pos = 0;
+  const maxQ = partial ? Math.round(Q * (0.65 + Math.random() * 0.15)) : Q;
+
+  function add(type, len) {
+    len = Math.min(len, maxQ - pos);
+    if (len <= 0) return;
+    segs.push({ type, start: pos, len }); pos += len;
+  }
+  function canAdd(len) { return pos + len <= maxQ; }
+
+  // ── Couchette split (total 10 h = 40 quarters) ──
+  // Première couchette max 8h pour que le poste commence au plus tard à 08h00
+  const splits = [[8,2],[7,3],[6,4],[5,5],[4,6],[3,7],[2,8]];
+  const [c1h, c2h] = splits[Math.floor(Math.random() * splits.length)];
+  const c1q = Math.min(c1h * 4, 32); // max 32 quarters = 8h
+  const c2q = 40 - c1q; // remainder to always total 10h
+
+  // ── Build modulable breaks: random 30/60/90 min blocks totalling ≥ 2 h ──
+  const breakOptions = [2, 4, 6]; // quarters
+  let breakList = [];
+  let breakTotal = 0;
+  while (breakTotal < 8) {
+    const remaining = 8 - breakTotal;
+    const choices = breakOptions.filter(b => b <= remaining + 2);
+    const pick = choices[Math.floor(Math.random() * choices.length)];
+    breakList.push(pick);
+    breakTotal += pick;
+  }
+  breakList = breakList.sort(() => Math.random() - 0.5);
+
+  // ── Couchette 1 ──
+  add('couchette', c1q);
+
+  // ── Interleave drive blocks and breaks ──
+  const numDriveBlocks = breakList.length + 1;
+  for (let i = 0; i < numDriveBlocks; i++) {
+    add('conduite', rq(1, 3));
+    if (Math.random() > 0.5 && canAdd(2)) add('travail', rq(0.5, 1));
+    if (i < breakList.length && canAdd(breakList[i])) add('repos', breakList[i]);
+  }
+
+  // ── Couchette 2 ──
+  if (!partial) {
+    // Fill ALL remaining quarters before couchette2 with conduite/travail (never repos)
+    // Loop to consume leftover space in conduite/travail blocks
+    while (pos < Q - c2q) {
+      const rem = Q - pos - c2q;
+      if (rem <= 0) break;
+      // Alternate conduite and travail to fill naturally
+      const fillC = Math.min(rem, rq(1, Math.min(3, Math.ceil(rem / 4) + 1)));
+      add('conduite', fillC);
+      const rem2 = Q - pos - c2q;
+      if (rem2 > 0 && Math.random() > 0.4) {
+        add('travail', Math.min(rem2, rq(1, Math.min(2, Math.ceil(rem2 / 4) + 1))));
+      }
+    }
+    // Always cap with couchette2 to reach exactly Q
+    add('couchette', Q - pos);
+  } else {
+    if (canAdd(c2q)) add('couchette', c2q);
+  }
+
+  return segs;
+}
+
+/* ═══════════════════════════════════════════════════
+   GENERATE
+═══════════════════════════════════════════════════ */
+// Store partial cutoff for result checking
+let partialCutoffQ = 0;
+
+function generateFiche() {
+  ALL_ROWS.forEach(r => { state[r] = new Array(Q).fill(false); });
+
+  const ficheType  = document.getElementById('ficheType').value;
+  const driverType = document.getElementById('driverType').value;
+  const isPartial  = ficheType === 'partielle';
+  const isLongue   = driverType === 'longue';
+
+  const schedule = isLongue
+    ? buildScheduleLongue(isPartial)
+    : buildScheduleLocal(isPartial);
+
+  schedule.forEach(seg => {
+    for (let q = seg.start; q < seg.start + seg.len && q < Q; q++) {
+      state[seg.type][q] = true;
+    }
+  });
+
+  // Determine partial cutoff (last filled quarter)
+  if (isPartial) {
+    let last = 0;
+    ALL_ROWS.forEach(r => {
+      for (let q = Q-1; q >= 0; q--) { if (state[r][q]) { last = Math.max(last, q+1); break; } }
+    });
+    partialCutoffQ = last;
+  } else {
+    partialCutoffQ = Q;
+  }
+
+  updateOdometer();
+  renderAll();
+  updatePartialSection(isPartial);
+  document.getElementById('resultBox').style.display = 'none';
+  clearInputs();
+}
+
+function updatePartialSection(isPartial) {
+  const sec    = document.getElementById('consigneSection');
+  const header = document.getElementById('consigneHeader');
+  const text   = document.getElementById('consigneText');
+  const fields = document.getElementById('partialFields');
+
+  sec.style.display = 'block';
+
+  if (!isPartial) {
+    // ── Fiche complète ──
+    header.textContent = '📋 Consigne — Fiche complète';
+    text.innerHTML =
+      'Comptabilisez le nombre d\'heures de chaque activité dans la colonne <strong>Total (h)</strong> ' +
+      'à droite de la fiche journalière, puis déterminez si la fiche est ' +
+      '<strong>conforme</strong> ou <strong>non-conforme</strong> au règlement HCR ' +
+      'en utilisant la liste déroulante ci-dessus. Cliquez ensuite sur <strong>Résultats</strong> ' +
+      'pour valider votre réponse.';
+    fields.style.display = 'none';
+  } else {
+    // ── Fiche partielle ──
+    header.textContent = '📋 Consigne — Fiche partielle';
+    text.innerHTML =
+      'Comptabilisez le nombre d\'heures de chaque activité dans la colonne <strong>Total (h)</strong> ' +
+      'à droite de la fiche journalière. ' +
+      'Ensuite, calculez et inscrivez dans les champs ci-dessous : ' +
+      'le <strong>temps de service restant</strong> au poste de 16 h ' +
+      '(horloge continue depuis la première activité), ' +
+      'les <strong>heures de conduite restantes</strong> (max 13 h) ' +
+      'et les <strong>heures de travail total restantes</strong> (conduite + travail, max 14 h). ' +
+      'Cliquez ensuite sur <strong>Résultats</strong> pour valider vos calculs.';
+    fields.style.display = 'flex';
+  }
+}
+
+function updateOdometer() {
+  const t = calcTotals();
+  const km = Math.round(t.conduite * 90);
+  const deb = Math.floor(Math.random() * 60000) + 90000;
+  document.getElementById('odo-deb').textContent = deb.toLocaleString('fr-CA') + ' km';
+  document.getElementById('odo-fin').textContent = (deb + km).toLocaleString('fr-CA') + ' km';
+  document.getElementById('odo-km').textContent  = km.toLocaleString('fr-CA') + ' km';
+}
+
+function clearInputs() {
+  ['in-repos','in-couchette','in-conduite','in-travail'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  ['p-service-rest','p-conduite-rest','p-travail-rest'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('conformeSelect').value = '';
+}
+
+/* ═══════════════════════════════════════════════════
+   SHOW RESULT
+═══════════════════════════════════════════════════ */
+function showResult() {
+  const t = calcTotals();
+  if (t.total === 0 && partialCutoffQ === 0) {
+    alert('Veuillez d\'abord générer une fiche journalière.'); return;
+  }
+
+  const ficheType  = document.getElementById('ficheType').value;
+  const driverType = document.getElementById('driverType').value;
+  const isPartial  = ficheType === 'partielle';
+  const isLongue   = driverType === 'longue';
+
+  const box = document.getElementById('resultBox');
+
+  if (isPartial) {
+    showResultPartiel(t, isLongue, box);
+  } else {
+    showResultComplet(t, isLongue, box);
+  }
+
+  box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+/* ═══════════════════════════════════════════════════
+   POSTE TIMING — calcule le début du quart et la
+   durée réelle écoulée depuis le début du poste
+   (horloge continue incluant repos courts)
+═══════════════════════════════════════════════════ */
+function calcPosteTiming() {
+  // Début du poste = premier quartier de conduite, travail ou couchette
+  let debutQ = -1;
+  for (let q = 0; q < Q; q++) {
+    if (state.conduite[q] || state.travail[q] || state.couchette[q]) {
+      debutQ = q; break;
+    }
+  }
+  if (debutQ === -1) return { debutQ: 0, finQ: 0, dureePosteQ: 0 };
+
+  // Fin du poste = dernier quartier NON-repos (conduite, travail ou couchette)
+  // Le repos de fin de journée ne compte PAS dans la durée du poste
+  let finQ = debutQ;
+  const cutoff = partialCutoffQ > 0 ? partialCutoffQ : Q;
+  for (let q = cutoff - 1; q >= debutQ; q--) {
+    if (state.conduite[q] || state.travail[q] || state.couchette[q]) {
+      finQ = q + 1; break;
+    }
+  }
+
+  // Durée du poste = fin - début (horloge continue, repos courts à l'intérieur inclus)
+  const dureePosteQ = finQ - debutQ;
+
+  return { debutQ, finQ, dureePosteQ };
+}
+
+/* ── Fiche complète ── */
+function showResultComplet(t, isLongue, box) {
+  const choix = document.getElementById('conformeSelect').value;
+  if (!choix) { alert('Veuillez sélectionner votre verdict de conformité.'); return; }
+
+  const { debutQ, dureePosteQ } = calcPosteTiming();
+  const dureePoste  = dureePosteQ * 0.25;
+  const travailTotal = t.conduite + t.travail;
+
+  let conforme;
+  if (isLongue) {
+    conforme = t.conduite <= 13 && travailTotal <= 14 && dureePoste <= 16 && t.couchette >= 10;
+  } else {
+    conforme = t.conduite <= 13 && travailTotal <= 14 && dureePoste <= 16 && t.resTot >= 10;
+  }
+  const ok = (choix === 'conforme') === conforme;
+
+  const viols = [];
+  if (t.conduite > 13)   viols.push('Conduite de <strong>' + fmtH(t.conduite) + '</strong> dépasse 13 h');
+  if (travailTotal > 14) viols.push('Travail total de <strong>' + fmtH(travailTotal) + '</strong> dépasse 14 h');
+  if (dureePoste > 16)   viols.push('Poste de travail de <strong>' + fmtH(dureePoste) + '</strong> dépasse 16 h (début à ' + fmtQ(debutQ) + ')');
+  if (!isLongue && t.resTot < 10)   viols.push('Repos de <strong>' + fmtH(t.resTot) + '</strong> inférieur à 10 h');
+  if (isLongue && t.couchette < 10) viols.push('Couchette de <strong>' + fmtH(t.couchette) + '</strong> inférieure à 10 h');
+
+  const retro = ok
+    ? (conforme
+        ? '<strong>Bonne réponse !</strong> Cette fiche est <strong>conforme</strong> au règlement HCR. Toutes les limites sont respectées.'
+        : '<strong>Bonne réponse !</strong> Cette fiche est <strong>non-conforme</strong>. Infractions :<ul>' + viols.map(v=>'<li>'+v+'</li>').join('') + '</ul>')
+    : (conforme
+        ? '<strong>Réponse incorrecte.</strong> La fiche est en réalité <strong>conforme</strong>. Révisez vos calculs.'
+        : '<strong>Réponse incorrecte.</strong> La fiche est <strong>non-conforme</strong>. Infractions à détecter :<ul>' + viols.map(v=>'<li>'+v+'</li>').join('') + '</ul>');
+
+  const uR  = parseFloat(document.getElementById('in-repos').value);
+  const uCo = parseFloat(document.getElementById('in-couchette').value);
+  const uC  = parseFloat(document.getElementById('in-conduite').value);
+  const uT  = parseFloat(document.getElementById('in-travail').value);
+
+  box.className = 'result-box ' + (ok ? 'correct' : 'wrong');
+  box.style.display = 'block';
+  document.getElementById('vIcon').textContent = ok ? '✓' : '✗';
+  document.getElementById('vText').textContent = ok
+    ? 'Bonne réponse — votre verdict est correct'
+    : 'Réponse incorrecte — votre verdict est erroné';
+  document.getElementById('retro').innerHTML = retro;
+  document.getElementById('chkTitle').textContent = 'Vérification de vos totaux';
+
+  // Stat cards: limits at a glance
+  const cards = buildStatCards(t.conduite, travailTotal, dureePoste, debutQ);
+
+  // Verification rows: compare user input against what's IN the fiche
+  // Travail in the input = travail SANS conduite (as shown in the graph)
+  let rows = chkRow('Repos', uR, t.repos)
+    + chkRow('Couchette', uCo, t.couchette)
+    + chkRow('Conduite', uC, t.conduite)
+    + chkRow('Travail (sans conduite)', uT, t.travail);
+  if (!isLongue) rows += chkRow('Repos total', uR, t.resTot);
+  else rows += chkRow('Couchette totale', uCo, t.couchette);
+
+  document.getElementById('chkRows').innerHTML = cards + rows;
+  document.getElementById('regNote').innerHTML = buildRegNote(isLongue, debutQ, dureePoste);
+}
+
+/* ── Fiche partielle ── */
+function showResultPartiel(t, isLongue, box) {
+  const pSR = parseFloat(document.getElementById('p-service-rest').value);
+  const pCR = parseFloat(document.getElementById('p-conduite-rest').value);
+  const pTR = parseFloat(document.getElementById('p-travail-rest').value);
+
+  if (isNaN(pSR) && isNaN(pCR) && isNaN(pTR)) {
+    alert('Veuillez remplir au moins un champ de temps restant.'); return;
+  }
+
+  const { debutQ, finQ, dureePosteQ } = calcPosteTiming();
+  const dureePoste   = dureePosteQ * 0.25;
+  const travailTotal = t.conduite + t.travail;
+
+  const realServiceRest  = Math.max(0, Math.round((16 - dureePoste) * 4) / 4);
+  const realConduiteRest = Math.max(0, Math.round((13 - t.conduite) * 4) / 4);
+  const realTravailRest  = Math.max(0, Math.round((Math.min(14 - travailTotal, realServiceRest)) * 4) / 4);
+
+  let allOk = true;
+  const retroLines = [];
+  if (!isNaN(pSR)) {
+    const ok = Math.abs(pSR - realServiceRest) <= 0.3;
+    if (!ok) allOk = false;
+    retroLines.push({ lbl: 'Temps de service restant (poste 16 h)', user: pSR, real: realServiceRest, ok });
+  }
+  if (!isNaN(pCR)) {
+    const ok = Math.abs(pCR - realConduiteRest) <= 0.3;
+    if (!ok) allOk = false;
+    retroLines.push({ lbl: 'Heures de conduite restantes (max 13 h)', user: pCR, real: realConduiteRest, ok });
+  }
+  if (!isNaN(pTR)) {
+    const ok = Math.abs(pTR - realTravailRest) <= 0.3;
+    if (!ok) allOk = false;
+    retroLines.push({ lbl: 'Heures de travail restantes (max 14 h)', user: pTR, real: realTravailRest, ok });
+  }
+
+  let retro = allOk
+    ? '<strong>Excellent !</strong> Tous vos calculs sont corrects.'
+    : '<strong>Certains calculs sont incorrects.</strong> Vérifiez le détail ci-dessous.';
+
+  retro += '<br><br>📌 <strong>Démarche :</strong> Poste débuté à <strong>' + fmtQ(debutQ) +
+    '</strong>, arrêt à <strong>' + fmtQ(finQ) +
+    '</strong>. Durée écoulée = <strong>' + fmtH(dureePoste) +
+    '</strong>. Temps restant = 16 h − ' + fmtH(dureePoste) +
+    ' = <strong>' + fmtH(realServiceRest) + '</strong>.';
+
+  if (t.conduite >= 13) retro += '<br>⚠ Limite de conduite de 13 h atteinte.';
+  if (dureePoste >= 16) retro += '<br>⚠ Poste de 16 h dépassé — repos immédiat requis.';
+  if (travailTotal >= 14) retro += '<br>⚠ Limite de travail de 14 h atteinte.';
+
+  // Stat cards showing accumulated + remaining
+  const cards = buildStatCardsPartiel(
+    t.conduite, realConduiteRest,
+    travailTotal, realTravailRest,
+    dureePoste, realServiceRest
+  );
+
+  box.className = 'result-box ' + (allOk ? 'correct' : 'wrong');
+  box.style.display = 'block';
+  document.getElementById('vIcon').textContent = allOk ? '✓' : '✗';
+  document.getElementById('vText').textContent = allOk
+    ? 'Tous vos calculs sont corrects !'
+    : 'Certains calculs sont à revoir';
+  document.getElementById('retro').innerHTML = retro;
+  document.getElementById('chkTitle').textContent = 'Vérification — Temps restant au poste';
+
+  document.getElementById('chkRows').innerHTML =
+    cards +
+    '<div style="font-size:11px;color:#999;font-style:italic;margin:10px 0 6px;">Votre réponse → Réponse correcte</div>' +
+    retroLines.map(r => chkRow(r.lbl, r.user, r.real)).join('');
+
+  document.getElementById('regNote').innerHTML = buildRegNote(isLongue, debutQ, dureePoste);
+}
+
+// Format a quarter index as HH:MM clock time
+function fmtQ(q) {
+  const totalMin = q * 15;
+  const h = Math.floor(totalMin / 60);
+  const m = totalMin % 60;
+  return String(h).padStart(2,'0') + 'h' + String(m).padStart(2,'0');
+}
+
+function buildStatCards(conduiteH, travailTotalH, dureePosteH, debutQ) {
+  function card(label, value, limitLabel, ok) {
+    const cls  = ok ? 'ok' : 'err';
+    const icon = ok ? '✓' : '✗';
+    return `<div class="stat-card ${cls}">
+      <span class="sc-icon">${icon}</span>
+      <span class="sc-label">${label}</span>
+      <span class="sc-value">${fmtH(value)}</span>
+      <span class="sc-limit">${limitLabel}</span>
+    </div>`;
+  }
+  const posteLabel = 'Max : 16 h &nbsp;(début : ' + fmtQ(debutQ) + ')';
+  return `<div class="stat-cards">
+    ${card('Conduite', conduiteH, 'Max : 13 h', conduiteH <= 13)}
+    ${card('Travail total', travailTotalH, 'Max : 14 h', travailTotalH <= 14)}
+    ${card('Durée du poste', dureePosteH, posteLabel, dureePosteH <= 16)}
+  </div>`;
+}
+
+function buildStatCardsPartiel(conduiteH, conduiteRestH, travailTotalH, travailRestH, dureePosteH, serviceRestH) {
+  function card(label, accum, rest, max) {
+    const over = accum > max;
+    const cls  = over ? 'err' : 'ok';
+    const icon = over ? '✗' : '✓';
+    return `<div class="stat-card ${cls}">
+      <span class="sc-icon">${icon}</span>
+      <span class="sc-label">${label}</span>
+      <span class="sc-value">${fmtH(accum)}</span>
+      <span class="sc-limit">Restant : <strong>${fmtH(rest)}</strong> &nbsp;/&nbsp; Max : ${max} h</span>
+    </div>`;
+  }
+  return `<div class="stat-cards">
+    ${card('Conduite accumulée', conduiteH, conduiteRestH, 13)}
+    ${card('Travail accumulé', travailTotalH, travailRestH, 14)}
+    ${card('Durée du poste', dureePosteH, serviceRestH, 16)}
+  </div>`;
+}
+
+function buildRegNote(isLongue, debutQ, dureePoste) {
+  const debut = debutQ !== undefined ? ' (début du poste : <strong>' + fmtQ(debutQ) + '</strong>)' : '';
+  if (isLongue) {
+    return '<strong>Rappel – Règlement HCR (longue distance) :</strong> ' +
+      'Conduite max <strong>13 h</strong> · Poste de travail max <strong>16 h</strong>' + debut + ' · ' +
+      'Fractionnement du repos : 2 périodes de couchette totalisant <strong>10 h</strong> ' +
+      '+ <strong>2 h modulables</strong> (min 30 min/tranche) · ' +
+      'Cycle 1 : max <strong>70 h / 7 jours</strong>.';
+  }
+  return '<strong>Rappel – Règlement HCR (local) :</strong> ' +
+    'Conduite max <strong>13 h</strong> · Poste de travail max <strong>16 h</strong>' + debut + ' · ' +
+    'Repos minimum <strong>10 h</strong> consécutives · ' +
+    'Cycle 1 : max <strong>70 h / 7 jours</strong>.';
+}
+
+function chkRow(lbl, user, real) {
+  const blank = isNaN(user);
+  const pass  = !blank && Math.abs(user - real) <= 0.3;
+  const cls   = pass ? 'ok' : 'err';
+  const icon  = blank ? '⚠' : (pass ? '✓' : '✗');
+  return `<div class="chk-row">
+    <span class="chk-lbl">${lbl}</span>
+    <span class="chk-user ${cls}">${blank ? '—' : fmtH(user)}</span>
+    <span class="chk-sep">→</span>
+    <span class="chk-real ${cls}">${fmtH(real)}</span>
+    <span style="font-size:13px;margin-left:4px;" class="${cls}">${icon}</span>
+  </div>`;
+}
+
+/* ═══════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════ */
+buildRuler();
+ALL_ROWS.forEach(r => buildCellTicks(r));
+window.addEventListener('resize', renderAll);
+
+const today = new Date();
+document.getElementById('disp-date').textContent =
+  String(today.getDate()).padStart(2,'0') + ' / ' +
+  String(today.getMonth()+1).padStart(2,'0') + ' / ' + today.getFullYear();
+
+setTimeout(generateFiche, 120);
+</script>
+</body>
+</html>
