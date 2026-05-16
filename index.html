@@ -658,7 +658,10 @@ input[type="number"] { -moz-appearance: textfield; }
   .act-row { height: 44px; }
   .act-lbl { width: 70px; min-width: 70px; font-size: 9px; }
   .ruler-lbl { width: 70px; min-width: 70px; font-size: 9px; }
-  .cell-ticks, .row-ticks { display: none; } /* hide sub-ticks on small screens */
+  /* Sur tablette : ticks plus épais et plus contrastés */
+  .tk-h  { width: 2px; height: 60%; background: #555; }
+  .tk-hf { width: 1px; height: 40%; background: #888; }
+  .tk-q  { width: 1px; height: 25%; background: #aaa; }
 }
 
 /* Mobile (≤ 600px): further simplification */
@@ -683,6 +686,10 @@ input[type="number"] { -moz-appearance: textfield; }
   .tot-row input[type="number"] { width: 62px; font-size: 11px; }
   .tot-row label { font-size: 7px; }
   .hn { font-size: 8px; }
+  /* Sur mobile : ticks encore plus épais */
+  .tk-h  { width: 2px; height: 65%; background: #444; }
+  .tk-hf { width: 2px; height: 45%; background: #777; }
+  .tk-q  { width: 1px; height: 30%; background: #999; }
 
   .stat-cards { grid-template-columns: 1fr; }
   .sc-value { font-size: 18px; }
@@ -1038,6 +1045,10 @@ input[type="number"] { -moz-appearance: textfield; }
   </div>
 
 </div><!-- /doc -->
+  <!-- FOOTER -->
+  <div style="text-align:center; padding: 14px 18px; font-size: 11px; color: #fff; background: #1a3a5c; margin-top: 8px; border-radius: 0 0 6px 6px;">
+    Simulation pédagogique · Fiche journalière · DEP 5291 · Transport routier de marchandises &nbsp;|&nbsp; <strong style="color:#fff;">Propriété de Guillaume Nicole-Roussel</strong>
+  </div>
 </div><!-- /page-wrap -->
 
 <script>
@@ -2168,10 +2179,7 @@ document.getElementById('disp-date').textContent =
 
 setTimeout(generateFiche, 120);
 </script>
-<!-- FOOTER -->
-<div style="text-align:center; padding: 14px 18px; font-size: 11px; color: #5a8a9a; background: #1a3a5c; color: #aac8d8; margin-top: 8px; border-radius: 0 0 6px 6px;">
-  Simulation pédagogique · Fiche journalière · DEP 5291 · Transport routier de marchandises &nbsp;|&nbsp; <strong style="color:#fff;">Propriété de Guillaume Nicole-Roussel</strong>
-</div>
+
 
 </body>
 </html>
